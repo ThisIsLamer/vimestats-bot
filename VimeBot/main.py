@@ -1,7 +1,10 @@
 from discord.ext import commands
 import discord
 
+from loguru import logger
+
 import json, os
+
 
 def main():
     client = commands.Bot(command_prefix=None)
@@ -17,3 +20,7 @@ def main():
 
     token = config["token"]
     client.run(token)
+    return "!!! Работа завершена !!!"
+
+if __name__ == "__main__":
+    logger.info(main())
