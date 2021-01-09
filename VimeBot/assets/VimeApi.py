@@ -56,7 +56,7 @@ def GetPlayersSession(id, session=DEFAULT_SESSION):
 '''
 
 
-def GetPlayerStats(id, games, session=DEFAULT_SESSION):
+def GetPlayerStats(id, games=None, session=DEFAULT_SESSION):
     if games is None:
         response = requests.get(session + "/user/" + id + "/stats")
     else:

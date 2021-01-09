@@ -16,7 +16,6 @@ class EventHandler(commands.Cog):
         level="DEBUG", rotation="4mb", compression="zip", serialize=True)
 
         logger.info("Бот запущен")
-        
 
 
 def setup(client):

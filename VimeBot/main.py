@@ -7,11 +7,11 @@ import json, os
 
 
 def main():
-    client = commands.Bot(command_prefix=None)
-    client.remove_command("help")
-
     with open("config.json", "r", encoding="utf-8") as file:
-        config = json.load(file)
+            config = json.load(file)
+
+    client = commands.Bot(command_prefix=config["prefix"])
+    #client.remove_command("help")
 
     for module in config["Components"]:
         for filename in os.listdir(f"assets/{module}"):
@@ -23,4 +23,4 @@ def main():
     return "!!! Работа завершена !!!"
 
 if __name__ == "__main__":
-    logger.info(main())
+    logger.warning(main())
