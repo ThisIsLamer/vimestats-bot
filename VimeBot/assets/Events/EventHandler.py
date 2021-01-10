@@ -12,10 +12,10 @@ class EventHandler(commands.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
-        logger.add("debug.json", format="{time} {level} {message}",
+        logger.add("logs/debug.json", format="{time} {level} {message}",
         level="DEBUG", rotation="4mb", compression="zip", serialize=True)
 
-        logger.info("Бот запущен")
+        logger.info("Бот подключился к серверам дискорд")
 
 
 def setup(client):

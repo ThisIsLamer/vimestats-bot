@@ -22,32 +22,84 @@ class CustomCommands(commands.Cog):
 
         if ~(name.isdigit()):
             id = vime.GetPlayersName(names=name).replace("[", "").replace("]", "")
-            print(id)
             name = str(json.loads(id)["id"])
 
         def GuildCheck(guild):
             if guild is None:
-                return "*Не состоит в семье*"
+                return "*...*"
             else:
-                return f"|*Гильдия:* **{guild['name']}**\n|*id:* **{guild['id']}**\n|*Уровень:* **{guild['level']}**\n|*Прогресс:* **{'%.2f'%((guild['levelPercentage'])*100)}%**"
+                return guild['name']
 
         def MessageGeneration(UserStats):
-            data = f"> *id:* **{UserStats['user']['id']}**\n\
-                > *Уровень:* **{UserStats['user']['level']}**\n\
-                > *Прогресс:* **{'%.2f' % ((UserStats['user']['levelPercentage'])*100)}%**\n\
-                > *Ранг:* **{(UserStats['user']['rank']).lower()}**\n\
-                > *Наиграно часов:* **{'%.2f' % ((UserStats['user']['playedSeconds'])/3600)}**\n\
-                > {GuildCheck(guild=UserStats['user']['guild'])}"
+            def FunctionGetStatistics(stats):
+                kd=rate=games=wins=kills=death = 0
+
+                for item in stats:
+                    if "BRIDGE" in item:
+                        break
+                    else:
+                        if "kills" in stats[item]["global"]:
+                            if stats[item]["global"] != 0:
+                                kills += stats[item]["global"]["kills"]
+
+                        if "deaths" in stats[item]["global"]:
+                            if stats[item]["global"] != 0:
+                                death += stats[item]["global"]["deaths"]
+
+                        if "games" in stats[item]["global"]:
+                            if stats[item]["global"] != 0:
+                                games += stats[item]["global"]["games"]
+
+                        if "wins" in stats[item]["global"]:
+                            if stats[item]["global"] != 0:
+                                wins += stats[item]["global"]["wins"]
+
+                wins = (wins * 100) / games
+                kd = kills / death
+                rate = int((kd * wins * games * kills * death) / 10000)
+
+                return kd, wins, games, kills, death, rate
+
+            def GuildField(guild):
+                return f"**Название**\n *{guild['name']}*\n\
+                    **Тег**\n *{guild['tag']}*\n\
+                    **Уровень**\n *{guild['level']}*\n\
+                    **Прогресс**\n *{float('{0:.2f}'.format(guild['levelPercentage']*100))}%*\n\
+                    **Цвет**\n *{guild['color']}*\n\
+                    **id**\n *{guild['id']}*"
+
+            getStatistics = FunctionGetStatistics(stats=UserStats["stats"])
+
+            description = f"**id**\n *{UserStats['user']['id']}*\n\
+                **Уровень**\n *{UserStats['user']['level']}*\n\
+                **Прогресс**\n *{'%.2f' % ((UserStats['user']['levelPercentage'])*100)}%*\n\
+                **Ранг**\n *{(UserStats['user']['rank']).lower()}*\n\
+                **Наиграно часов**\n *{'%.2f' % ((UserStats['user']['playedSeconds'])/3600)}*\n\
+                **Клан**\n *{GuildCheck(UserStats['user']['guild'])}*"
+            
+            averageStatistics = f"**К/д**\n *{'%.2f' % getStatistics[0]}*\n\
+                **Побед**\n *{'%.2f' % getStatistics[1]}%*\n\
+                **Всего игр**\n *{getStatistics[2]}*\n\
+                **Убийств**\n *{getStatistics[3]}*\n\
+                **Смертей**\n *{getStatistics[4]}*\n\
+                **Рейтинг**\n *{getStatistics[5]}*"
 
             if UserStats["user"]["guild"] is None:
-                emb = discord.Embed(title=UserStats["user"]["username"], description=data)
+                emb = discord.Embed()
             else:
-                print(ColorList[UserStats["user"]["guild"]["color"]])
-                emb = discord.Embed(title=UserStats["user"]["username"], description=data, colour = ColorList[UserStats["user"]["guild"]["color"]])
+                emb = discord.Embed(colour = ColorList[UserStats["user"]["guild"]["color"]])
                 if UserStats["user"]["guild"]["avatar_url"] is None:
                     pass
                 else:
                     emb.set_thumbnail(url=UserStats["user"]["guild"]["avatar_url"])
+            
+            emb.add_field(name="Описание", value=description)
+            emb.add_field(name="Статистика", value=averageStatistics)
+            
+            if UserStats["user"]["guild"] is None:
+                pass
+            else:
+                emb.add_field(name="Гильдия", value=GuildField(guild=UserStats["user"]["guild"]))
 
             emb.set_author(name=ctx.author.name, icon_url=ctx.author.avatar_url)
             return emb
