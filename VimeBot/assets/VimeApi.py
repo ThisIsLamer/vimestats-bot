@@ -16,7 +16,7 @@ def ConnectionApi():
 
 def GetPlayersName(names, session=DEFAULT_SESSION):
     response = requests.get(session + "/user/name/" + names)
-    return response
+    return response.text
 
 
 '''
@@ -27,7 +27,7 @@ def GetPlayersName(names, session=DEFAULT_SESSION):
 
 def GetPlayersId(ids, session=DEFAULT_SESSION):
     response = requests.get(session + "/user/" + ids)
-    return response
+    return response.text
 
 
 '''
@@ -37,7 +37,7 @@ def GetPlayersId(ids, session=DEFAULT_SESSION):
 
 def GetPlayerFriends(id, session=DEFAULT_SESSION):
     response = requests.get(session + "/user/" + id + "/friends")
-    return response
+    return response.text
 
 
 '''
@@ -48,7 +48,7 @@ def GetPlayerFriends(id, session=DEFAULT_SESSION):
 
 def GetPlayersSession(id, session=DEFAULT_SESSION):
     response = requests.get(session + "/user/" + id + "/session")
-    return response
+    return response.text
 
 
 '''
@@ -62,7 +62,7 @@ def GetPlayerStats(id, games=None, session=DEFAULT_SESSION):
     else:
         response = requests.get(session + "/user/" + id + "/stats" + "?" + games)
 
-    return response
+    return response.text
 
 
 '''
@@ -76,7 +76,7 @@ def GetPlayerStats(id, games=None, session=DEFAULT_SESSION):
 
 def GetPlayerAchievements(id, session=DEFAULT_SESSION):
     response = requests.get(session + "/user/" + id + "/achievements")
-    return response
+    return response.text
 
 
 '''
@@ -86,7 +86,7 @@ def GetPlayerAchievements(id, session=DEFAULT_SESSION):
 
 def GetPlayerLeaderboards(id, session=DEFAULT_SESSION):
     response = requests.get(session + "/user/" + id + "/leaderboards")
-    return response
+    return response.text
 
 
 '''
@@ -96,7 +96,7 @@ def GetPlayerLeaderboards(id, session=DEFAULT_SESSION):
 
 def GetPlayerMatches(id, session=DEFAULT_SESSION):
     response = requests.get(session + "/user/" + id + "/matches")
-    return response
+    return response.text
 
 
 '''
@@ -106,7 +106,7 @@ def GetPlayerMatches(id, session=DEFAULT_SESSION):
 
 def GetSession(ids, session=DEFAULT_SESSION):
     response = requests.get(session + "/user/session/" + ids)
-    return response
+    return response.text
 
 
 '''
@@ -125,7 +125,7 @@ def GetSession(ids, session=DEFAULT_SESSION):
 
 def GetSessions(ids, session=DEFAULT_SESSION):
     response = requests.get(session + "/user/session" + ids)
-    return response
+    return response.text
 
 
 '''
@@ -143,7 +143,7 @@ query - запрос для поиска (минимум 2 символа)
 
 def SearchGuild(query, session=DEFAULT_SESSION):
     response = requests.get(session + "/guild/search?query=" + query)
-    return response
+    return response.text
 
 
 '''
@@ -162,7 +162,7 @@ tag* - Получение по тегу гильдии.
 
 def GetGuild(arg, data, session=DEFAULT_SESSION):
     response = requests.get(session + "/guild/get?" + arg +"="+ data)
-    return response
+    return response.text
 
 
 '''
@@ -178,7 +178,7 @@ sort - Список доступных вариантов таблицы рек�
 
 def ListLeaderboard(session=DEFAULT_SESSION):
     response = requests.get(session + "/leaderboard/list")
-    return response
+    return response.text
 
 
 # Тут должен быть этот метод: /leaderboard/get/:type[/:sort] 
@@ -198,7 +198,7 @@ separated - Онлайн отдельно по каждой мини игре.
 
 def Online(session=DEFAULT_SESSION):
     response = requests.get(session + "/online")
-    return response
+    return response.text
 
 
 '''
@@ -219,7 +219,7 @@ platform - Платформа, на которой идет стрим
 
 def OnlineStreams(session=DEFAULT_SESSION):
     response = requests.get(session + "/online/streams")
-    return response
+    return response.text
 
 
 '''
@@ -229,7 +229,7 @@ def OnlineStreams(session=DEFAULT_SESSION):
 
 def OnlineStaff(session=DEFAULT_SESSION):
     response = requests.get(session + "/online/staff")
-    return response
+    return response.text
 
 
 '''
@@ -239,7 +239,7 @@ def OnlineStaff(session=DEFAULT_SESSION):
 
 def GetMatch(id, session=DEFAULT_SESSION):
     response = requests.get(session + "/match/" + id)
-    return response
+    return response.text
 
 
 '''
@@ -249,7 +249,7 @@ def GetMatch(id, session=DEFAULT_SESSION):
 
 def GetLocale(session=DEFAULT_SESSION, name="ru"):
     response = requests.get(session + "/locale/" + name)
-    return response
+    return response.text
 
 
 '''
@@ -259,7 +259,7 @@ def GetLocale(session=DEFAULT_SESSION, name="ru"):
 
 def GetMiscGames(session=DEFAULT_SESSION):
     response = requests.get(session + "/misc/games")
-    return response
+    return response.text
 
 
 '''
@@ -269,7 +269,7 @@ def GetMiscGames(session=DEFAULT_SESSION):
 
 def GetMiscMaps(session=DEFAULT_SESSION):
     response = requests.get(session + "/misc/maps")
-    return response
+    return response.text
 
 
 '''
@@ -279,7 +279,7 @@ def GetMiscMaps(session=DEFAULT_SESSION):
 
 def GetMiscAchievements(session=DEFAULT_SESSION):
     response = requests.get(session + "/misc/achievements")
-    return response
+    return response.text
 
 
 if __name__ == "__main__":
