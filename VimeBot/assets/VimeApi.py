@@ -282,5 +282,12 @@ def GetMiscAchievements(session=DEFAULT_SESSION):
     return response.text
 
 
+def GetSkin(id, session="http://skin.vimeworld.ru/raw/skin/playboi_.png?_="):
+    p = requests.get(session+id)
+    out = open("assets/TemporaryPictures/img.jpg", "wb")
+    out.write(p.content)
+    out.close()
+
+
 if __name__ == "__main__":
-    print(GetPlayersName(session=ConnectionApi(), names="otter_lamer").text)
+    pass

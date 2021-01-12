@@ -11,6 +11,10 @@ class EventHandler(commands.Cog):
 
 
     @commands.Cog.listener()
+    async def on_connect(self):
+        pass
+
+    @commands.Cog.listener()
     async def on_ready(self):
         logger.add("logs/debug.json", format="{time} {level} {message}",
         level="DEBUG", rotation="4mb", compression="zip", serialize=True)

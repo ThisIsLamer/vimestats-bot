@@ -1,7 +1,8 @@
 from discord.ext import commands
-import discord, json
+import discord, json, requests, io
 
 from loguru import logger
+from PIL import Image
 
 from assets import VimeApi as vime
 
@@ -12,39 +13,18 @@ class test(commands.Cog):
         self.client = client
 
     @commands.command(aliases=["test"])
-    async def _test(self, ctx, name, arg=None):
-        def jj(name):
-            kd=rate=games=wins=kills=death = 0
+    async def _test(self, ctx, id, arg=None):
+        vime.GetSkin(id=id)
 
-            id = vime.GetPlayersName(names=name).replace("[", "").replace("]", "")
-            name = str(json.loads(id)["id"])
+        img = Image.open("assets/TemporaryPictures/img.jpg")
+        area = (8,8,16,16)
+        img = img.crop(area)
 
-            stats = json.loads(vime.GetPlayerStats(id=name).replace("[", "").replace("]", ""))["stats"]
-            for item in stats:
-                if "BRIDGE" in item:
-                    break
-                else:
-                    if "kills" in stats[item]["global"]:
-                        if stats[item]["global"] != 0:
-                            kills += stats[item]["global"]["kills"]
+        img = Image.open(io.BytesIO(img))
 
-                    if "deaths" in stats[item]["global"]:
-                        if stats[item]["global"] != 0:
-                            death += stats[item]["global"]["deaths"]
+        img.save("assets/TemporaryPictures/img.jpg")
 
-                    if "games" in stats[item]["global"]:
-                        if stats[item]["global"] != 0:
-                            games += stats[item]["global"]["games"]
-
-                    if "wins" in stats[item]["global"]:
-                        if stats[item]["global"] != 0:
-                            wins += stats[item]["global"]["wins"]
-
-            wins = (wins * 100) / games
-            kd = kills / death
-            rate = int((kd * wins * games * kills * death) / 10000)
-
-            return kd, wins, kills, death, rate
+        await ctx.send(file=discord.File(fp="assets/TemporaryPictures/img.jpg"))
 
 def setup(client):
     client.add_cog(test(client))
