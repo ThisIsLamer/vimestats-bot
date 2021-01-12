@@ -13,6 +13,16 @@ class CustomCommands(commands.Cog):
     def __init__(self, client):
         self.client = client
 
+    '''
+    Команда которая выводит статистику пользователя, имеет несколько применений в зависимости от запроса.
+    1) Пример: !stat nic -  выведется обычная статистика игрока с информацией об аккаунте/гильдии и статистикой в аркадах
+    2) Пример: !stat nic1 nic2 arc - выведется статистика обоих пользователей, с расчётом эффективности одного игрока над другим
+    3) Пример: !stat nic arc -  выведется статистика в выбранном режиме
+
+    >>> ctx - обьект сообщения который передаёт пользователь,
+    >>> name - ник пользователя по которому будет найдена статистика,
+    >>> arg - аргумент передаёт аргументы пользователя, может быть nic, может быть id режима
+    '''
     @commands.command(aliases=["stat"])
     async def UserStat(self, ctx, name, arg=None):
         message = await ctx.send(content="Загрузка ...")
@@ -148,6 +158,60 @@ class CustomCommands(commands.Cog):
         else:
             arg = arg.upper()
             await message.edit(content=None, embed=FlagMessageGeneration(stats["stats"][arg]))
+
+    '''
+    Команда онлайн выводит весь онлайн по всем минииграм на сервере,
+    а так же онлайн по отдельным минииграм, и онлайн персонала
+
+    >>> ctx - обьект сообщения который передаёт пользователь
+    '''
+    @commands.command(aliases=["online"])
+    async def _test(self, ctx):
+        def GenerationText(online, staff, NameGames):
+            data=data1=data2=name = ""
+            i=arc = 0
+            for item in online["separated"].keys():
+                if item == "lobby":
+                    pass
+                else:
+                    if item.upper() in ["BRIDGE", "JUMPLEAGUE", "MURDER", "PAINTBALL", "SHEEP", "TURFWARS", "TNTTAG", "TNTRUN", "LUCKYWARS", "ZOMBIECLAUS"]:
+                        arc += online["separated"][item]
+                    else:
+                        for j in NameGames:
+                            if j["id"].lower() == item:
+                                name = j["name"]
+
+                        if i < 7:
+                            data += f"**• {name}**\n*{online['separated'][item]}*\n"
+                        else:
+                            data1 += f"**• {name}**\n*{online['separated'][item]}*\n"
+                        i += 1
+
+            for i in range(len(staff)):
+                if "name" in staff[i]['guild']:
+                    guildname = staff[i]['guild']['name']
+                else:
+                    guildname = None
+                data2 += f"**◉ {staff[i]['username']}**\n*{guildname}*\n"
+
+            return data, data1, data2, arc
+
+        online = json.loads(vime.Online())
+        staff = json.loads(vime.OnlineStaff())
+
+        gentext = GenerationText(
+            online=online,
+            staff=staff,
+            NameGames=json.loads(vime.GetMiscGames())
+        )
+
+        emb = discord.Embed()
+
+        emb.add_field(name="Онлайн", value=gentext[0])
+        emb.add_field(name=online["total"], value=gentext[1]+f"**Arcade**\n{gentext[3]}")
+        emb.add_field(name=f"Персонал: {len(staff)}", value=gentext[2])
+
+        await ctx.send(embed=emb)
 
 
 def setup(client):
