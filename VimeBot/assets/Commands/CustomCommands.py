@@ -1,7 +1,10 @@
 from discord.ext import commands
 import discord, json
 
+from youtube_api import YoutubeDataApi
 from googletrans import Translator
+from Cybernator import Paginator
+
 from loguru import logger
 
 from assets import VimeApi as vime
@@ -11,7 +14,11 @@ from assets import TotalStats
 class CustomCommands(commands.Cog):
 
     def __init__(self, client):
+        with open("config.json", "r", encoding="utf-8") as file:
+            self.config = json.load(file)
+
         self.client = client
+        self.yt = YoutubeDataApi(self.config["yt_token"])
 
     '''
     Команда которая выводит статистику пользователя, имеет несколько применений в зависимости от запроса.
@@ -24,7 +31,7 @@ class CustomCommands(commands.Cog):
     >>> arg - аргумент передаёт аргументы пользователя, может быть nic, может быть id режима
     '''
     @commands.command(aliases=["stat"])
-    async def UserStat(self, ctx, name, arg=None):
+    async def _UserStat(self, ctx, name, arg=None):
         message = await ctx.send(content="Загрузка ...")
 
         ColorList = {"&0": discord.Colour(value=0x000000), "&1": discord.Colour.dark_blue(), "&2": discord.Colour.dark_green(), "&3": discord.Colour.dark_teal(),
@@ -166,7 +173,7 @@ class CustomCommands(commands.Cog):
     >>> ctx - обьект сообщения который передаёт пользователь
     '''
     @commands.command(aliases=["online"])
-    async def _test(self, ctx):
+    async def _online(self, ctx):
         def GenerationText(online, staff, NameGames):
             data=data1=data2=name = ""
             i=arc = 0
@@ -212,6 +219,80 @@ class CustomCommands(commands.Cog):
         emb.add_field(name=f"Персонал: {len(staff)}", value=gentext[2])
 
         await ctx.send(embed=emb)
+
+
+    '''
+    Команде streams передаёт список активных стримов и выводит в чат в виде Embed, если стримов нет, выводится предупреждение
+    о отсутствие стримов, если стрим один выводится данный стрим, если несколько, то стримы сортируются во уменьшению зрителей
+    на стриме, и внедрители можно мереключать между собой использую соответствующие эмодзи.
+
+    >>> ctx - обьект сообзения которое отправляет юзер
+    '''
+    @commands.command(aliases=["streams"])
+    async def _streams(self, ctx):
+        message = await ctx.send(content="Загрузка ...")
+        streams = json.loads(vime.OnlineStreams())
+
+        def Content(stream):
+            def Activity(arg):
+                try:
+                    arg = arg["game"]
+                    if arg == "LOBBY":
+                        return "Находится в лобби"
+                    else:
+                        return f"Играет в {arg.lower()}"
+                except:
+                    return "Онлайн"
+
+            if stream["platform"] == "YouTube":
+                colour = discord.Colour.red()
+            elif stream["platform"] == "Twitch":
+                colour = discord.Colour.purple()
+            else:
+                colour = discord.Colour.default()
+
+            video = self.yt.get_video_metadata(video_id=stream["url"].replace("https://youtu.be/", ""))
+            online = json.loads(vime.GetPlayersSession(id=str(stream["user"]["id"])))["online"]
+
+            emb = discord.Embed(
+                title=video["video_title"],
+                description=f"• Зрителей: {stream['viewers']}  • Продолжительность: {float('{0:.2f}'.format(stream['duration']/3600))}ч \
+                    | 👍 {video['video_like_count']} / 👎 {video['video_dislike_count']}",
+                url=stream["url"],
+                colour=colour
+            )
+            emb.set_image(url=video["video_thumbnail"])
+            emb.set_author(name=stream["owner"], icon_url=f"https://skin.vimeworld.ru/head/{stream['owner']}.png")
+
+            emb.add_field(name="Общее", value=f"**• Уровень**\n *{stream['user']['level']}*\n\
+                **• Наиграно часов**\n *{'%.2f' % ((stream['user']['playedSeconds'])/3600)}*")
+            emb.add_field(name="Активность", value=f"**• Статус**\n*{Activity(online)}*\n\
+                **• Подробнее**\n*{online['message']}*")
+
+            if "guild" in stream["user"]:
+                emb.add_field(name="Гильдия", value=f"**• Название**\n*{stream['user']['guild']['name']}*\n\
+                    **• Уровень**\n*{stream['user']['guild']['level']}*")
+            return emb
+            
+        if len(streams) == 0 :
+            await message.edit(content="В данный момент стримы отсутствуют")
+        elif len(streams) == 1:
+            await message.edit(content=None, embed=Content(streams[0]))
+        else:
+            embeds = []
+            spectators = []
+            for stream in streams:
+                spectators.append(stream["viewers"])
+            spectators.sort(reverse=True)
+
+            for stream in streams:
+                for spectator in spectators:
+                    if spectator == stream["viewers"]:
+                        embeds.append(Content(stream=stream))
+
+            await message.edit(content=None, embed=embeds[0])
+            page = Paginator(self.client, message, only=ctx.author, use_more=False, embeds=embeds, timeout=9000)
+            await page.start()
 
 
 def setup(client):
