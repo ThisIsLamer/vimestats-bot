@@ -30,7 +30,7 @@ class CustomCommands(commands.Cog):
     >>> name - ник пользователя по которому будет найдена статистика,
     >>> arg - аргумент передаёт аргументы пользователя, может быть nic, может быть id режима
     '''
-    @commands.command(aliases=["stat"])
+    @commands.command(aliases=["stat", "stats", "стата", "статистика"])
     async def _UserStat(self, ctx, name, arg=None):
         message = await ctx.send(content="Загрузка ...")
 
@@ -172,7 +172,7 @@ class CustomCommands(commands.Cog):
 
     >>> ctx - обьект сообщения который передаёт пользователь
     '''
-    @commands.command(aliases=["online"])
+    @commands.command(aliases=["online", "онлайн"])
     async def _online(self, ctx):
         def GenerationText(online, staff, NameGames):
             data=data1=data2=name = ""
@@ -228,7 +228,7 @@ class CustomCommands(commands.Cog):
 
     >>> ctx - обьект сообзения которое отправляет юзер
     '''
-    @commands.command(aliases=["streams"])
+    @commands.command(aliases=["streams", "стримы", "трансляции"])
     async def _streams(self, ctx):
         message = await ctx.send(content="Загрузка ...")
         streams = json.loads(vime.OnlineStreams())
@@ -292,6 +292,54 @@ class CustomCommands(commands.Cog):
 
             await message.edit(content=None, embed=embeds[0])
             page = Paginator(self.client, message, only=ctx.author, use_more=False, embeds=embeds, timeout=9000)
+            await page.start()
+
+
+    '''
+    Команда achievement выводит все возможные достижения из игры
+
+    >>> ctx - обьект сообщения пользователя
+    >>> arg - id нужного достижение которое нужно вывести
+    '''
+    @commands.command(aliases=["achievement", "достижения", "ачивки"])
+    async def _achievement(self, ctx, arg=None):
+        color = {"Глобальные": 0xFFAA00, "Лобби": 0xFFD700, "SkyWars": 0x3CA0D0,
+        "BedWars": 0xFF0700, "GunGame": 0x1B1BB3, "MobWars": 0x00C90D,
+        "DeathRun": 0x8B42D6, "KitPvP": 0xFF3500, "BlockParty": 0x00AE68,
+        "Annihilation": 0x9B001C, "HungerGames": 0xFFE800, "BuildBattle": 0x3216B0,
+        "ClashPoint": 0xABF000, "Дуэли": 0xCE0071, "Prison": 0xA63400}
+
+        message = await ctx.send(content="Загрузка...")
+        achievements = json.loads(vime.GetMiscAchievements())
+        names = achievements.keys()
+
+        def GeneratorEmbeds(achievement, name):
+            emb = discord.Embed(title=achievement["title"], description=f"**id:** *{achievement['id']}*\n\
+                **Приз:** *{achievement['reward']}*\n**Описание**\n{achievement['description'][0]}",
+                color=color[name])
+
+            emb.set_author(name=name)
+
+            return emb
+
+        try:
+            arg = int(arg)
+            for name in names:
+                for i in achievements[name]:
+                    if arg is i["id"]:
+                        await message.edit(content=None, embed=GeneratorEmbeds(achievement=i, name=name))
+        
+        except:
+            embeds = []
+            for name in names:
+                group = []
+                for i in achievements[name]:
+                    group.append(GeneratorEmbeds(achievement=i, name=name))
+
+                embeds.append(group)
+
+            await message.edit(content=None, embed=embeds[0][0])
+            page = Paginator(self.client, message, only=ctx.author, use_more=True, embeds=embeds, timeout=16000)
             await page.start()
 
 
