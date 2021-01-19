@@ -20,6 +20,19 @@ class CustomCommands(commands.Cog):
         self.client = client
         self.yt = YoutubeDataApi(self.config["yt_token"])
 
+        # Цвета внедрителя модуля вывода достижений
+        self.color = {"Глобальные": 0xFFAA00, "Лобби": 0xFFD700, "SkyWars": 0x3CA0D0,
+            "BedWars": 0xFF0700, "GunGame": 0x1B1BB3, "MobWars": 0x00C90D,
+            "DeathRun": 0x8B42D6, "KitPvP": 0xFF3500, "BlockParty": 0x00AE68,
+            "Annihilation": 0x9B001C, "HungerGames": 0xFFE800, "BuildBattle": 0x3216B0,
+            "ClashPoint": 0xABF000, "Дуэли": 0xCE0071, "Prison": 0xA63400}
+
+        # Цвета внедрителя модуля вывода статистики
+        self.ColorList = {"&0": discord.Colour(value=0x000000), "&1": discord.Colour.dark_blue(), "&2": discord.Colour.dark_green(), "&3": discord.Colour.dark_teal(),
+            "&4": discord.Colour.dark_red(), "&5": discord.Colour.dark_purple(), "&6": discord.Colour.gold(), "&7": discord.Colour.greyple(), "&8": discord.Colour.dark_gray(),
+            "&9": discord.Colour.blue(), "&a": discord.Colour.green(), "&b": discord.Colour(value=0x55FFFF), "&c": discord.Colour.red(), "&d": discord.Colour.purple(),
+            "&e": discord.Colour(value=0xFFFF55), "&f": discord.Colour(value=0xFFFFFF)}
+
     '''
     Команда которая выводит статистику пользователя, имеет несколько применений в зависимости от запроса.
     1) Пример: !stat nic -  выведется обычная статистика игрока с информацией об аккаунте/гильдии и статистикой в аркадах
@@ -33,11 +46,6 @@ class CustomCommands(commands.Cog):
     @commands.command(aliases=["stat", "stats", "стата", "статистика"])
     async def _UserStat(self, ctx, name, arg=None):
         message = await ctx.send(content="Загрузка ...")
-
-        ColorList = {"&0": discord.Colour(value=0x000000), "&1": discord.Colour.dark_blue(), "&2": discord.Colour.dark_green(), "&3": discord.Colour.dark_teal(),
-            "&4": discord.Colour.dark_red(), "&5": discord.Colour.dark_purple(), "&6": discord.Colour.gold(), "&7": discord.Colour.greyple(), "&8": discord.Colour.dark_gray(),
-            "&9": discord.Colour.blue(), "&a": discord.Colour.green(), "&b": discord.Colour(value=0x55FFFF), "&c": discord.Colour.red(), "&d": discord.Colour.purple(),
-            "&e": discord.Colour(value=0xFFFF55), "&f": discord.Colour(value=0xFFFFFF)}
 
         if ~(name.isdigit()):
             id = vime.GetPlayersName(names=name).replace("[", "").replace("]", "")
@@ -141,7 +149,7 @@ class CustomCommands(commands.Cog):
 
                 emb = discord.Embed(color = color)
             else:
-                emb = discord.Embed(colour = ColorList[UserStats["user"]["guild"]["color"]])
+                emb = discord.Embed(colour = self.ColorList[UserStats["user"]["guild"]["color"]])
                 if UserStats["user"]["guild"]["avatar_url"] is None:
                     pass
                 else:
@@ -303,12 +311,6 @@ class CustomCommands(commands.Cog):
     '''
     @commands.command(aliases=["achievement", "достижения", "ачивки"])
     async def _achievement(self, ctx, arg=None):
-        color = {"Глобальные": 0xFFAA00, "Лобби": 0xFFD700, "SkyWars": 0x3CA0D0,
-        "BedWars": 0xFF0700, "GunGame": 0x1B1BB3, "MobWars": 0x00C90D,
-        "DeathRun": 0x8B42D6, "KitPvP": 0xFF3500, "BlockParty": 0x00AE68,
-        "Annihilation": 0x9B001C, "HungerGames": 0xFFE800, "BuildBattle": 0x3216B0,
-        "ClashPoint": 0xABF000, "Дуэли": 0xCE0071, "Prison": 0xA63400}
-
         message = await ctx.send(content="Загрузка...")
         achievements = json.loads(vime.GetMiscAchievements())
         names = achievements.keys()
@@ -316,7 +318,7 @@ class CustomCommands(commands.Cog):
         def GeneratorEmbeds(achievement, name):
             emb = discord.Embed(title=achievement["title"], description=f"**id:** *{achievement['id']}*\n\
                 **Приз:** *{achievement['reward']}*\n**Описание**\n{achievement['description'][0]}",
-                color=color[name])
+                color=self.color[name])
 
             emb.set_author(name=name)
 
@@ -341,6 +343,63 @@ class CustomCommands(commands.Cog):
             await message.edit(content=None, embed=embeds[0][0])
             page = Paginator(self.client, message, only=ctx.author, use_more=True, embeds=embeds, timeout=16000)
             await page.start()
+
+    '''
+    Команда guild, гильдия - выводит информацию о гильдии и его создателе
+
+    >>> ctx - обьект сообщения которое передаёт пользователь,
+    >>> arg - аргумент - название, id, тег гильдии.
+    '''
+    @commands.command(aliases=["guild", "гильдия", "группа"])
+    async def _guild(self, ctx, *, arg):
+        message = await ctx.send(content="Загрузка...")
+
+        try:
+            int(arg)
+            nameArg = "id"
+        except:
+            nameArg = "name"
+            arg.replace(" ","%20")
+
+        guild = json.loads(vime.GetGuild(arg=nameArg, data=arg))
+
+        if "error" in guild:
+            guild = vime.GetGuild("tag", data=arg)
+
+            if "error" in guild:
+                await message.edit(content="Гильдия не найдена, введите корректное название, или id.")
+                return
+
+        emb = discord.Embed(colour=self.ColorList[guild["color"]])
+
+        if guild["avatar_url"] is None:
+            pass
+        else:
+            emb.set_author(name=guild["name"], icon_url=guild["avatar_url"])
+
+        emb.add_field(
+            name="Гильдия",
+            value=f"**• id**\n*{guild['id']}*\n\
+                **• Тег**\n*{guild['tag']}*\n\
+                **• Цвет**\n*{guild['color']}*\n\
+                **• Уровень**\n*{guild['level']}*\n\
+                **• Всего койнов**\n*{guild['totalCoins']}*\n\
+                **• Всего участников**\n*{len(guild['members'])}*"
+        )
+
+        for leader in guild["members"]:
+            if leader["status"] == "LEADER":
+                emb.add_field(
+                    name="Лидер",
+                    value=f"**• id**\n*{leader['user']['id']}*\n\
+                        **• Ник**\n*{leader['user']['username']}*\n\
+                        **• Ранг**\n*{leader['user']['rank']}*\n\
+                        **• Уровень**\n*{leader['user']['level']}*\n\
+                        **• Вложил койнов**\n*{leader['guildCoins']}*\n\
+                        **• Вложил опыта**\n*{leader['guildExp']}*"
+                )
+
+        await message.edit(content=None, embed=emb)
 
 
 def setup(client):

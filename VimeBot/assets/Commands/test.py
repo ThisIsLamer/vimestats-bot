@@ -15,45 +15,78 @@ class test(commands.Cog):
         
 
     @commands.command(aliases=["ts"])
-    async def _test(self, ctx, arg=None):
-        color = {"Глобальные": 0xFFAA00, "Лобби": 0xFFD700, "SkyWars": 0x3CA0D0,
-        "BedWars": 0xFF0700, "GunGame": 0x1B1BB3, "MobWars": 0x00C90D,
-        "DeathRun": 0x8B42D6, "KitPvP": 0xFF3500, "BlockParty": 0x00AE68,
-        "Annihilation": 0x9B001C, "HungerGames": 0xFFE800, "BuildBattle": 0x3216B0,
-        "ClashPoint": 0xABF000, "Дуэли": 0xCE0071, "Prison": 0xA63400}
-
+    async def _test(self, ctx, arg):
         message = await ctx.send(content="Загрузка...")
-        achievements = json.loads(vime.GetMiscAchievements())
-        names = achievements.keys()
-
-        def GeneratorEmbeds(achievement, name):
-            emb = discord.Embed(title=achievement["title"], description=f"**id:** *{achievement['id']}*\n\
-                **Приз:** *{achievement['reward']}*\n**Описание**\n{achievement['description']}",
-                color=color[name])
-
-            emb.set_author(name=name)
-
-            return emb
 
         try:
-            arg = int(arg)
-            for name in names:
-                for i in achievements[name]:
-                    if arg is i["id"]:
-                        await message.edit(content=None, embed=GeneratorEmbeds(achievement=i, name=name))
-        
+            int(arg)
+            nameArg = "id"
         except:
-            embeds = []
-            for name in names:
-                group = []
-                for i in achievements[name]:
-                    group.append(GeneratorEmbeds(achievement=i, name=name))
+            nameArg = "name"
+            arg.replace(" ","%")
 
-                embeds.append(group)
+        guild = vime.GetGuild(arg=nameArg, data=arg)
 
-            await message.edit(content=None, embed=embeds[0][0])
-            page = Paginator(self.client, message, only=ctx.author, use_more=True, embeds=embeds, timeout=16000)
-            await page.start()
+        if "error" in guild:
+            guild = vime.GetGuild("tag", data=arg)
+
+            if "error" in guild:
+                await message.edit(content="Гильдия не найдена, введите корректное название, или id.")
+                return
+        
+        emb = discord.Embed()
+
+        emb.set_author(name=guild["name"], url=guild["avatar_url"])
+
+        emb.add_field(
+            name="Гильдия",
+            value=f"**• id**\n*{guild['id']}*\n\
+                **• Тег**\n*{guild['tag']}*\n\
+                **• Цвет**\n*{guild['color']}*\n\
+                **• Уровень**\n*{guild['level']}*\n\
+                **• Всего койнов**\n*{guild['totalCoins']}*\n\
+                **• Всего участников**\n*{len(guild['members'])}*"
+        )
+
+        for leader in guild["members"]:
+            if leader["status"] == "LEADER":
+                emb.add_field(
+                    name="Лидер",
+                    value=f"**• id**\n*{leader['user']['id']}*\n\
+                        **• Ник**\n*{leader['user']['username']}*\n\
+                        **• Ранг**\n*{leader['user']['rank']}*\n\
+                        **• Уровень**\n*{leader['user']['level']}*\n\
+                        **• Вложил монет**\n*{leader['guildCoins']}*\n\
+                        **• Вложил опыта**\n*{leader['guildExp']}*"
+                )
+        perksLevel = []
+        listPerks = {"arr": []}
+        for perk in guild["perks"].keys():
+            perksLevel.append(guild["perks"][perk]["level"])
+        perksLevel.sort(reverse=True)
+
+        i = 0
+        for perk in guild["perks"].keys():
+            if i == 5:
+                break
+            if perksLevel[0] in guild["perks"][perk]["level"]:
+                listPerks["arr"].append({
+                    "name": guild["perks"][perk]["name"],
+                    "level": guild["perks"][perk]["level"]
+                })
+                perksLevel.pop(0)
+                i += 1
+        
+        data = ""
+        for perk in listPerks["arr"]:
+            data += f"**• {perk['name']}**\n*{perk['level']}*\n"
+
+        emb.add_field(
+            name="Перки",
+            value=data
+        )
+
+        await message.edit(content=None, embed=emb)
 
 
 def setup(client):
