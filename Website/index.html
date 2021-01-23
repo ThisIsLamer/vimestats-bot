@@ -14,52 +14,147 @@
     <header>
         <div class="container d-flex aline-items-center">
             <div class="header_logo distance_from_logo d-flex">
-                <a href="#">
-                    <img class="header_logo_img" src="" alt="V">
-                    <span>VimeBot</span>
+                <a href="#" class="header_logo d-flex">
+                    <img class="header_logo_img" src="./assets/image/icon_black.png" alt="V">
+                    <span class="header_span">VimeBot</span>
                 </a>
             </div>
             <ul class="menu d-flex">
-                <li class="menu_item">
+                <li id="add" class="menu_item padding">
                     <a href="#">добавить</a>
                 </li>
-                <li class="menu_item">
-                    <a href="#">команды</a>
+                <li id="capabilities" class="menu_item padding">
+                    <a href="#">возможности</a>
                 </li>
-                <li class="menu_item">
+                <li id="help" class="menu_item padding">
                     <a href="#">помощь</a>
                 </li>
             </ul>
         </div>
     </header>
     <div class="background_1">
-        <main class="toner">
-            <div class="main d-flex">
+        <section>
+            <div class="toner d-flex">
 
             </div>
-        </main>
+            <div class="main_content d-flex">
+                <div class="main_____">
+                    <div class="main_title">
+                        Бот для игрового Discord сообщества проекта VimeWorld.
+                    </div>
+                    <div class="main_description">
+                        Вступай в наши круги, тем самым сделав свой сервер ярче
+                        и функциональнее.
+                    </div>
+                    <a href="#" class="main_button">добавить</a>
+                </div>
+                <img src="./assets/image/icon.png" alt="" class="main_image">
+            </div>
+        </section>
     </div>
     <div class="content d-flex">
         <div class="information_block">
-            <div class="add d-flex">
+            <div class="capabilities">
                 <div class="title">
-                    Добавить
+                    Возможности
+                </div>
+                <div class="items">
+                    <div class="item item_width">
+                        <div class="item_flex">
+                            <img src="assets/image/capabilities/achievements.png" alt="" class="item_image">
+                            <span class="item_title">достижения</span>
+                            <span class="item_description">
+                                Просматривайте достижения и награду за них
+                                соревнуйтесь с друзьями по количеству полученных
+                                достижений. 
+                            </span>
+                        </div>
+                    </div>
+                    <div class="item item_width">
+                        <div class="item_flex">
+                            <img src="assets/image/capabilities/guild.png" alt="" class="item_image">
+                            <span class="item_title">группы</span>
+                            <span class="item_description">
+                                Просматривайте свою группу или группу друга.
+                                Так же вы можете узнать уровень, койны, опыт
+                                группы.
+                            </span>
+                        </div>
+                    </div>
+                    <div class="item item_width">
+                        <div class="item_flex">
+                            <img src="assets/image/capabilities/statistic.png" alt="" class="item_image">
+                            <span class="item_title">статистика</span>
+                            <span class="item_description">
+                                Просматривайте свою статистику или статистику
+                                друзей, соревнуйтесь за звание лучшего игрока
+                                сравнивая рейтинг.
+                            </span>
+                        </div>
+                    </div>
+                    <div class="item item_width">
+                        <div class="item_flex">
+                            <img src="assets/image/capabilities/binding.png" alt="" class="item_image">
+                            <span class="item_title">привязка</span>
+                            <span class="item_description">
+                                Любой пользователь бота может привязать к своему
+                                Discord аккаунту ник из игры, и просматривать
+                                любую информацию не вводя ник.
+                            </span>
+                        </div>
+                    </div>
+                    <div class="item item_width">
+                        <div class="item_flex">
+                            <img src="assets/image/capabilities/online.png" alt="" class="item_image">
+                            <span class="item_title">онлайн</span>
+                            <span class="item_description">
+                                Просматривайте онлайн на каждой миниигре сервера
+                                VimeWorld.
+                            </span>
+                        </div>
+                    </div>
+                    <div class="item item_width">
+                        <div class="item_flex">
+                            <img src="assets/image/capabilities/youtube.png" alt="" class="item_image">
+                            <span class="item_title">стримы</span>
+                            <span class="item_description">
+                                Просматривайте, текущие стримы по серверу VimeWorld,
+                                делитесь ими с друзьями.
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="commands">
+                <div class="title">
+                    помощь
                 </div>
                 <div class="description">
-                    Вы можете добавить VimeBot'a к себе в Discord сервер
-                    и пользоваться всеми его возможностями, бот позволяет
-                    просматривать статистику, лостижения, гильдии игроков
-                    сервера VimeWorld. Учтите, что для работы бота, ему 
-                    нужнопредоставить доступ к чтению, отправки сообщений,
-                    в те каналы, в которых вы желаете его использовать. 
-                    Для просмотра доступных функций бота, введите команду 
-                    !help.
+                    Если у вас появиллись какие-либо вопросы по работе бота,
+                    или баги, вы можете перейти в официальный Discord канал
+                    бота и там задать свои вопросы.
                 </div>
+                <a href="#" class="help_buttom">перейти</a>
             </div>
         </div>
     </div>
-    <div class="footer">
-        dqdq
+    <div class="footer d-flex">
+        <ul class="footer_menu d-flex">
+            <div class="footer_ d-flex">
+                <li class="footer_item"><a href="#" class="footer_button">сервер в discord</a></li>
+                <li class="footer_item"><a href="#" class="footer_button">страничка на top.gg</a></li>
+                <li class="footer_item"><a href="#" class="footer_button">документация</a></li>
+            </div>
+            <div class="footer_ d-flex">
+                <li class="footer_item"><a href="#" class="footer_button">пользовательское соглашение</a></li>
+                <li class="footer_item"><a href="#" class="footer_button">конфиденциальность</a></li>
+                <li class="footer_item"><a href="#" class="footer_button">файлы cookie</a></li>
+            </div>
+            <div class="footer_meta">
+                © 2021, VimeBot
+            </div>
+        </ul>
     </div>
+    <script async src="./assets/js/script.js"></script>
 </body>
 </html>
