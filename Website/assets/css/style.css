@@ -5,6 +5,8 @@ body{
     text-transform: uppercase;
     color: white;
     letter-spacing: .09em;
+
+    cursor: url("../cursor/BibataBlack/Arrow.cur"), auto;
 }
 
 h1, h2, h3, h4, h5, h6{
@@ -29,6 +31,10 @@ a, a:hover, a:active {
     color: white;
     text-decoration: none;
     transition: all 0.5s ease;
+}
+
+.pointer{
+    cursor: url("../cursor/BibataBlack/Hand.cur"), pointer;
 }
 
 .background_1{
@@ -157,8 +163,8 @@ header{
     position: absolute;
     border-radius: 30vh;
 
-    margin-top: -7.5vh;
-    margin-left: 220%;
+    right: -100vh;
+    top: -7.5vh;
 
     width: 60%;
 
@@ -166,7 +172,9 @@ header{
 }
 
 .main_image:hover{
-    margin-top: -9vh;
+    top: -9.5vh;
+    right: -102vh;
+
     width: 65%;
 
     box-shadow: 0 0 50px rgb(0,0,0,.7);

@@ -20,3 +20,22 @@ window.onscroll = () => {
         document.getElementById("help").style.borderWidth = 'medium';
     }
 }
+
+var scapabilities = document.getElementById("scroll_capabilities");
+var sadd = document.getElementById("scroll_add");
+var shelp = document.getElementById("scroll_help");
+
+var capabilities = document.getElementById("capabilities");
+var add = document.getElementById("add");
+var help = document.getElementById("help");
+capabilities.onclick = function(){
+    scapabilities.scrollIntoView({block: "center", behavior: "smooth"});
+}
+
+add.onclick = function(){
+    sadd.scrollIntoView({block: "center", behavior: "smooth"});
+}
+
+help.onclick = function(){
+    shelp.scrollIntoView({block: "center", behavior: "smooth"});
+}
