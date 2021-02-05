@@ -10,6 +10,8 @@ from loguru import logger
 from assets import VimeApi as vime
 from assets import TotalStats
 
+from assets.Database.userbind import start, add, remove, getNick
+
 
 class CustomCommands(commands.Cog):
 
@@ -19,6 +21,11 @@ class CustomCommands(commands.Cog):
 
         self.client = client
         self.yt = YoutubeDataApi(self.config["yt_token"])
+
+         # userbind база данных
+        self.base = start()
+        self.db = self.base[0]
+        self.sql = self.base[1]
 
         # Цвета внедрителя модуля вывода достижений
         self.color = {"Глобальные": 0xFFAA00, "Лобби": 0xFFD700, "SkyWars": 0x3CA0D0,
@@ -33,18 +40,83 @@ class CustomCommands(commands.Cog):
             "&9": discord.Colour.blue(), "&a": discord.Colour.green(), "&b": discord.Colour(value=0x55FFFF), "&c": discord.Colour.red(), "&d": discord.Colour.purple(),
             "&e": discord.Colour(value=0xFFFF55), "&f": discord.Colour(value=0xFFFFFF)}
 
+
+    @commands.command(aliases=["help", "помощь"])
+    async def _help(self, ctx):
+        emb = discord.Embed(description="Информация о всех командах бота,\
+        для просмотра более подробной информации по команде, используйте\
+        данную конструкцию: `!команда help`, `!stats help`")
+
+        emb.set_author(name="Помощь по командам")
+        emb.set_footer(text="• Канал поддержки бота: https://discord.gg/MsGbSCfPfx\n• Официальный сайт бота: https://thisislamer.000webhostapp.com/")
+
+        emb.add_field(
+            name="• stats",
+            value="*Просмотр статистики, известна как: stat, стата, статистика.*"
+        )
+        emb.add_field(
+            name="• online",
+            value="*Просмотр онлайна сервера, известна как: онлайн*"
+        )
+        emb.add_field(
+            name="• streams",
+            value="*Выводит все активные стримы на данный момент, известна как: стримы, трансляции*"
+        )
+        emb.add_field(
+            name="• achievement",
+            value="*Выводит все достижения доступные на проекте, известна как: достижения, ачивки*"
+        )
+        emb.add_field(
+            name="• guild",
+            value="*Выводит информацию о гильдии, известна как: гильдия, группа*"
+        )
+        
+        await ctx.send(embed=emb)
+
+
+    @commands.command(aliases=["bind", "привязать"])
+    async def _bind(self, ctx, nick):
+        if nick == "remove":
+            color = discord.Colour.green()
+            info = "Ник успешно отвязан"
+
+            remove(sql=self.sql, db=self.db, id=ctx.author.id)
+        else:
+            player = json.loads(vime.GetPlayersName(nick))
+            try:
+                player[0]["id"]
+
+                color = discord.Colour.green()
+                info = "Ник успешно привязан"
+
+                add(sql=self.sql, db=self.db, id=ctx.author.id, nick=nick)
+            except:
+                color = discord.Colour.red()
+                info = "Ник не найден, проверьте правильность ввода."
+
+        emb = discord.Embed(
+            title="Привязка",
+            description=info,
+            colour=color
+        )
+
+        await ctx.send(embed=emb)
+
     '''
     Команда которая выводит статистику пользователя, имеет несколько применений в зависимости от запроса.
-    1) Пример: !stat nic -  выведется обычная статистика игрока с информацией об аккаунте/гильдии и статистикой в аркадах
-    2) Пример: !stat nic1 nic2 arc - выведется статистика обоих пользователей, с расчётом эффективности одного игрока над другим
-    3) Пример: !stat nic arc -  выведется статистика в выбранном режиме
+    1) Пример: !stat nick -  выведется обычная статистика игрока с информацией об аккаунте/гильдии и статистикой в аркадах
+    2) Пример: !stat nick1 nick2 arc - выведется статистика обоих пользователей, с расчётом эффективности одного игрока над другим
+    3) Пример: !stat nick arc -  выведется статистика в выбранном режиме
 
     >>> ctx - обьект сообщения который передаёт пользователь,
     >>> name - ник пользователя по которому будет найдена статистика,
     >>> arg - аргумент передаёт аргументы пользователя, может быть nic, может быть id режима
     '''
     @commands.command(aliases=["stat", "stats", "стата", "статистика"])
-    async def _UserStat(self, ctx, name, arg=None):
+    async def _UserStat(self, ctx, name=None, arg=None):
+        if name is None:
+            name = getNick(sql=self.sql, db=self.db, id=ctx.author.id)[0]
+
         message = await ctx.send(content="Загрузка ...")
 
         if ~(name.isdigit()):

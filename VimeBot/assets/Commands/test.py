@@ -1,5 +1,5 @@
 from discord.ext import commands
-import discord, json, requests, io, os
+import discord, sqlite3, json
 
 from Cybernator import Paginator
 
@@ -7,86 +7,47 @@ from loguru import logger
 
 from assets import VimeApi as vime
 
+from assets.Database.userbind import start, add, remove
+
 
 class test(commands.Cog):
 
     def __init__(self, client):
         self.client = client
+
+        # userbind база данных
+        self.base = start()
+        self.db = self.base[0]
+        self.sql = self.base[1]
         
 
     @commands.command(aliases=["ts"])
-    async def _test(self, ctx, arg):
-        message = await ctx.send(content="Загрузка...")
+    async def _test(self, ctx, nick):
+        if nick == "remove":
+            color = discord.Colour.green()
+            info = "Ник успешно отвязан"
 
-        try:
-            int(arg)
-            nameArg = "id"
-        except:
-            nameArg = "name"
-            arg.replace(" ","%")
+            remove(sql=self.sql, db=self.db, id=ctx.author.id)
+        else:
+            player = json.loads(vime.GetPlayersName(nick))
+            try:
+                player[0]["id"]
 
-        guild = vime.GetGuild(arg=nameArg, data=arg)
+                color = discord.Colour.green()
+                info = "Ник успешно привязан"
 
-        if "error" in guild:
-            guild = vime.GetGuild("tag", data=arg)
+                add(sql=self.sql, db=self.db, id=ctx.author.id, nick=nick)
+            except:
+                color = discord.Colour.red()
+                info = "Ник не найден, проверьте правильность ввода."
 
-            if "error" in guild:
-                await message.edit(content="Гильдия не найдена, введите корректное название, или id.")
-                return
-        
-        emb = discord.Embed()
-
-        emb.set_author(name=guild["name"], url=guild["avatar_url"])
-
-        emb.add_field(
-            name="Гильдия",
-            value=f"**• id**\n*{guild['id']}*\n\
-                **• Тег**\n*{guild['tag']}*\n\
-                **• Цвет**\n*{guild['color']}*\n\
-                **• Уровень**\n*{guild['level']}*\n\
-                **• Всего койнов**\n*{guild['totalCoins']}*\n\
-                **• Всего участников**\n*{len(guild['members'])}*"
+        emb = discord.Embed(
+            title="Привязка",
+            description=info,
+            colour=color
         )
 
-        for leader in guild["members"]:
-            if leader["status"] == "LEADER":
-                emb.add_field(
-                    name="Лидер",
-                    value=f"**• id**\n*{leader['user']['id']}*\n\
-                        **• Ник**\n*{leader['user']['username']}*\n\
-                        **• Ранг**\n*{leader['user']['rank']}*\n\
-                        **• Уровень**\n*{leader['user']['level']}*\n\
-                        **• Вложил монет**\n*{leader['guildCoins']}*\n\
-                        **• Вложил опыта**\n*{leader['guildExp']}*"
-                )
-        perksLevel = []
-        listPerks = {"arr": []}
-        for perk in guild["perks"].keys():
-            perksLevel.append(guild["perks"][perk]["level"])
-        perksLevel.sort(reverse=True)
-
-        i = 0
-        for perk in guild["perks"].keys():
-            if i == 5:
-                break
-            if perksLevel[0] in guild["perks"][perk]["level"]:
-                listPerks["arr"].append({
-                    "name": guild["perks"][perk]["name"],
-                    "level": guild["perks"][perk]["level"]
-                })
-                perksLevel.pop(0)
-                i += 1
-        
-        data = ""
-        for perk in listPerks["arr"]:
-            data += f"**• {perk['name']}**\n*{perk['level']}*\n"
-
-        emb.add_field(
-            name="Перки",
-            value=data
-        )
-
-        await message.edit(content=None, embed=emb)
+        await ctx.send(embed=emb)
 
 
 def setup(client):
