@@ -10,7 +10,7 @@ from loguru import logger
 from assets import VimeApi as vime
 from assets import TotalStats
 
-from assets.Database.userbind import start, add, remove, getNick
+from assets.DatabaseService import DatabaseService
 
 
 class CustomCommands(commands.Cog):
@@ -23,9 +23,7 @@ class CustomCommands(commands.Cog):
         self.yt = YoutubeDataApi(self.config["yt_token"])
 
          # userbind база данных
-        self.base = start()
-        self.db = self.base[0]
-        self.sql = self.base[1]
+        self.base = DatabaseService()
 
         # Цвета внедрителя модуля вывода достижений
         self.color = {"Глобальные": 0xFFAA00, "Лобби": 0xFFD700, "SkyWars": 0x3CA0D0,
@@ -80,7 +78,7 @@ class CustomCommands(commands.Cog):
             color = discord.Colour.green()
             info = "Ник успешно отвязан"
 
-            remove(sql=self.sql, db=self.db, id=ctx.author.id)
+            self.base.remove(id=ctx.author.id)
         else:
             player = json.loads(vime.GetPlayersName(nick))
             try:
@@ -89,7 +87,7 @@ class CustomCommands(commands.Cog):
                 color = discord.Colour.green()
                 info = "Ник успешно привязан"
 
-                add(sql=self.sql, db=self.db, id=ctx.author.id, nick=nick)
+                self.base.add(id=ctx.author.id, nick=nick)
             except:
                 color = discord.Colour.red()
                 info = "Ник не найден, проверьте правильность ввода."
@@ -115,7 +113,7 @@ class CustomCommands(commands.Cog):
     @commands.command(aliases=["stat", "stats", "стата", "статистика"])
     async def _UserStat(self, ctx, name=None, arg=None):
         if name is None:
-            name = getNick(sql=self.sql, db=self.db, id=ctx.author.id)[0]
+            name = self.base.getNick(id=ctx.author.id)[0]
 
         message = await ctx.send(content="Загрузка ...")
 
