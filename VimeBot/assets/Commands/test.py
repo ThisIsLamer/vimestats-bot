@@ -12,7 +12,7 @@ class test(commands.Cog):
         with open("config.json", "r", encoding="utf-8") as file:
             self.config = json.load(file)
 
-        self.disk = yadisk.YaDisk(token=config["yt_token"])
+        self.disk = yadisk.YaDisk(token=self.config["yt_token"])
         
 
     @commands.command(aliases=["ts"])
