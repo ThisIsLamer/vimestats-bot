@@ -251,7 +251,7 @@ class CustomCommands(commands.Cog):
                 arg = arg.upper()
                 await message.edit(content=None, embed=FlagMessageGeneration(stats["stats"][arg]))
 
-        else:
+
 
 
     '''
@@ -357,7 +357,9 @@ class CustomCommands(commands.Cog):
             emb.add_field(name="Активность", value=f"**• Статус**\n*{Activity(online)}*\n\
                 **• Подробнее**\n*{online['message']}*")
 
-            if "guild" in stream["user"]:
+            if  stream["user"]["guild"] is None:
+                pass
+            else:
                 emb.add_field(name="Гильдия", value=f"**• Название**\n*{stream['user']['guild']['name']}*\n\
                     **• Уровень**\n*{stream['user']['guild']['level']}*")
             return emb
