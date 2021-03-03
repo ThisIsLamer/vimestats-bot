@@ -1,5 +1,5 @@
 from discord.ext import commands
-import discord, sqlite3, json, yadisk
+import discord, sqlite3, json
 
 from loguru import logger
 
@@ -11,8 +11,6 @@ class test(commands.Cog):
 
         with open("config.json", "r", encoding="utf-8") as file:
             self.config = json.load(file)
-
-        self.disk = yadisk.YaDisk(token=self.config["yt_token"])
         
 
     @commands.command(aliases=["ts"])

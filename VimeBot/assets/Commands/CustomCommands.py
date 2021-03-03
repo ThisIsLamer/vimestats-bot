@@ -126,6 +126,7 @@ class CustomCommands(commands.Cog):
         if arg is None:
             if ~(name.isdigit()):
                 id = vime.GetPlayersName(names=name).replace("[", "").replace("]", "")
+                print(id)
                 name = str(json.loads(id)["id"])
 
             def GuildCheck(guild):

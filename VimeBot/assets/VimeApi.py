@@ -1,7 +1,12 @@
-import requests
+import requests, json
 
+
+with open("config.json", "r", encoding="utf-8") as file:
+    config = json.load(file)
 
 DEFAULT_SESSION = "https://api.vimeworld.ru"
+HEADERS = {'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.121 Safari/537.36', 'accept': '*/*'}
+TOKEN = "?token=" + config["vime_token"]
 
 
 def ConnectionApi():
@@ -14,8 +19,8 @@ def ConnectionApi():
 '''
 
 
-def GetPlayersName(names, session=DEFAULT_SESSION):
-    response = requests.get(session + "/user/name/" + names)
+def GetPlayersName(names, session=DEFAULT_SESSION, token=TOKEN, headers=HEADERS):
+    response = requests.get(session + "/user/name/" + names + token, headers=headers)
     return response.text
 
 
@@ -25,8 +30,8 @@ def GetPlayersName(names, session=DEFAULT_SESSION):
 '''
 
 
-def GetPlayersId(ids, session=DEFAULT_SESSION):
-    response = requests.get(session + "/user/" + ids)
+def GetPlayersId(ids, session=DEFAULT_SESSION, token=TOKEN, headers=HEADERS):
+    response = requests.get(session + "/user/" + ids + token, headers=headers)
     return response.text
 
 
@@ -35,8 +40,8 @@ def GetPlayersId(ids, session=DEFAULT_SESSION):
 '''
 
 
-def GetPlayerFriends(id, session=DEFAULT_SESSION):
-    response = requests.get(session + "/user/" + id + "/friends")
+def GetPlayerFriends(id, session=DEFAULT_SESSION, token=TOKEN, headers=HEADERS):
+    response = requests.get(session + "/user/" + id + "/friends" + token, headers=headers)
     return response.text
 
 
@@ -46,8 +51,8 @@ def GetPlayerFriends(id, session=DEFAULT_SESSION):
 '''
 
 
-def GetPlayersSession(id, session=DEFAULT_SESSION):
-    response = requests.get(session + "/user/" + id + "/session")
+def GetPlayersSession(id, session=DEFAULT_SESSION, token=TOKEN, headers=HEADERS):
+    response = requests.get(session + "/user/" + id + "/session" + token, headers=headers)
     return response.text
 
 
@@ -56,11 +61,11 @@ def GetPlayersSession(id, session=DEFAULT_SESSION):
 '''
 
 
-def GetPlayerStats(id, games=None, session=DEFAULT_SESSION):
+def GetPlayerStats(id, games=None, session=DEFAULT_SESSION, token=TOKEN, headers=HEADERS):
     if games is None:
-        response = requests.get(session + "/user/" + id + "/stats")
+        response = requests.get(session + "/user/" + id + "/stats" + token, headers=headers)
     else:
-        response = requests.get(session + "/user/" + id + "/stats" + "?" + games)
+        response = requests.get(session + "/user/" + id + "/stats" + "?" + games + token, headers=headers)
 
     return response.text
 
@@ -74,8 +79,8 @@ def GetPlayerStats(id, games=None, session=DEFAULT_SESSION):
 """
 
 
-def GetPlayerAchievements(id, session=DEFAULT_SESSION):
-    response = requests.get(session + "/user/" + id + "/achievements")
+def GetPlayerAchievements(id, session=DEFAULT_SESSION, token=TOKEN, headers=HEADERS):
+    response = requests.get(session + "/user/" + id + "/achievements" + token, headers=headers)
     return response.text
 
 
@@ -84,8 +89,8 @@ def GetPlayerAchievements(id, session=DEFAULT_SESSION):
 '''
 
 
-def GetPlayerLeaderboards(id, session=DEFAULT_SESSION):
-    response = requests.get(session + "/user/" + id + "/leaderboards")
+def GetPlayerLeaderboards(id, session=DEFAULT_SESSION, token=TOKEN, headers=HEADERS):
+    response = requests.get(session + "/user/" + id + "/leaderboards" + token, headers=headers)
     return response.text
 
 
@@ -94,8 +99,8 @@ def GetPlayerLeaderboards(id, session=DEFAULT_SESSION):
 '''
 
 
-def GetPlayerMatches(id, session=DEFAULT_SESSION):
-    response = requests.get(session + "/user/" + id + "/matches")
+def GetPlayerMatches(id, session=DEFAULT_SESSION, token=TOKEN, headers=HEADERS):
+    response = requests.get(session + "/user/" + id + "/matches" + token, headers=headers)
     return response.text
 
 
@@ -104,8 +109,8 @@ def GetPlayerMatches(id, session=DEFAULT_SESSION):
 '''
 
 
-def GetSession(ids, session=DEFAULT_SESSION):
-    response = requests.get(session + "/user/session/" + ids)
+def GetSession(ids, session=DEFAULT_SESSION, token=TOKEN, headers=HEADERS):
+    response = requests.get(session + "/user/session/" + ids + token, headers=headers)
     return response.text
 
 
@@ -123,8 +128,8 @@ def GetSession(ids, session=DEFAULT_SESSION):
 """
 
 
-def GetSessions(ids, session=DEFAULT_SESSION):
-    response = requests.get(session + "/user/session" + ids)
+def GetSessions(ids, session=DEFAULT_SESSION, token=TOKEN, headers=HEADERS):
+    response = requests.get(session + "/user/session" + ids + token, headers=headers)
     return response.text
 
 
@@ -141,8 +146,8 @@ query - запрос для поиска (минимум 2 символа)
 """
 
 
-def SearchGuild(query, session=DEFAULT_SESSION):
-    response = requests.get(session + "/guild/search?query=" + query)
+def SearchGuild(query, session=DEFAULT_SESSION, token=TOKEN, headers=HEADERS):
+    response = requests.get(session + "/guild/search?query=" + query + token, headers=headers)
     return response.text
 
 
@@ -160,8 +165,8 @@ tag* - Получение по тегу гильдии.
 """
 
 
-def GetGuild(arg, data, session=DEFAULT_SESSION):
-    response = requests.get(session + "/guild/get?" + arg +"="+ data)
+def GetGuild(arg, data, session=DEFAULT_SESSION, token=TOKEN, headers=HEADERS):
+    response = requests.get(session + "/guild/get?" + arg +"="+ data + token, headers=headers)
     return response.text
 
 
@@ -176,8 +181,8 @@ sort - Список доступных вариантов таблицы рек�
 """
 
 
-def ListLeaderboard(session=DEFAULT_SESSION):
-    response = requests.get(session + "/leaderboard/list")
+def ListLeaderboard(session=DEFAULT_SESSION, token=TOKEN, headers=HEADERS):
+    response = requests.get(session + "/leaderboard/list" + token, headers=headers)
     return response.text
 
 
@@ -196,8 +201,8 @@ separated - Онлайн отдельно по каждой мини игре.
 """
 
 
-def Online(session=DEFAULT_SESSION):
-    response = requests.get(session + "/online")
+def Online(session=DEFAULT_SESSION, token=TOKEN, headers=HEADERS):
+    response = requests.get(session + "/online" + token, headers=headers)
     return response.text
 
 
@@ -217,8 +222,8 @@ platform - Платформа, на которой идет стрим
 """
 
 
-def OnlineStreams(session=DEFAULT_SESSION):
-    response = requests.get(session + "/online/streams")
+def OnlineStreams(session=DEFAULT_SESSION, token=TOKEN, headers=HEADERS):
+    response = requests.get(session + "/online/streams" + token, headers=headers)
     return response.text
 
 
@@ -227,8 +232,8 @@ def OnlineStreams(session=DEFAULT_SESSION):
 '''
 
 
-def OnlineStaff(session=DEFAULT_SESSION):
-    response = requests.get(session + "/online/staff")
+def OnlineStaff(session=DEFAULT_SESSION, token=TOKEN, headers=HEADERS):
+    response = requests.get(session + "/online/staff" + token, headers=headers)
     return response.text
 
 
@@ -237,8 +242,8 @@ def OnlineStaff(session=DEFAULT_SESSION):
 '''
 
 
-def GetMatch(id, session=DEFAULT_SESSION):
-    response = requests.get(session + "/match/" + id)
+def GetMatch(id, session=DEFAULT_SESSION, token=TOKEN, headers=HEADERS):
+    response = requests.get(session + "/match/" + id + token, headers=headers)
     return response.text
 
 
@@ -247,8 +252,8 @@ def GetMatch(id, session=DEFAULT_SESSION):
 '''
 
 
-def GetLocale(session=DEFAULT_SESSION, name="ru"):
-    response = requests.get(session + "/locale/" + name)
+def GetLocale(session=DEFAULT_SESSION, name="ru", token=TOKEN, headers=HEADERS):
+    response = requests.get(session + "/locale/" + name + token, headers=headers)
     return response.text
 
 
@@ -257,8 +262,8 @@ def GetLocale(session=DEFAULT_SESSION, name="ru"):
 '''
 
 
-def GetMiscGames(session=DEFAULT_SESSION):
-    response = requests.get(session + "/misc/games")
+def GetMiscGames(session=DEFAULT_SESSION, token=TOKEN, headers=HEADERS):
+    response = requests.get(session + "/misc/games" + token, headers=headers)
     return response.text
 
 
@@ -267,8 +272,8 @@ def GetMiscGames(session=DEFAULT_SESSION):
 '''
 
 
-def GetMiscMaps(session=DEFAULT_SESSION):
-    response = requests.get(session + "/misc/maps")
+def GetMiscMaps(session=DEFAULT_SESSION, token=TOKEN, headers=HEADERS):
+    response = requests.get(session + "/misc/maps" + token, headers=headers)
     return response.text
 
 
@@ -277,8 +282,8 @@ def GetMiscMaps(session=DEFAULT_SESSION):
 '''
 
 
-def GetMiscAchievements(session=DEFAULT_SESSION):
-    response = requests.get(session + "/misc/achievements")
+def GetMiscAchievements(session=DEFAULT_SESSION, token=TOKEN, headers=HEADERS):
+    response = requests.get(session + "/misc/achievements" + token, headers=headers)
     return response.text
 
 
