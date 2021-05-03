@@ -1,6 +1,6 @@
 {
   "name": "vimebot",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Бот для проекта Vimeworld, позволяющий выводить статистику игроков на любом сервере discord",
   "main": "./src/app.js",
   "scripts": {
