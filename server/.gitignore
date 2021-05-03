@@ -1,9 +1,0 @@
-# npm i
-server/node_modules
-
-# Структура файла:
-# {{"SERVER": {"TOKEN": "YOUR DISCORD TOKEN (*)", "PREFIX": "YOUR DEFAULT PREFIX (*)", "ID": "YOUR BOT ID (OPTIONAL)"}}}
-server/src/config.json
-
-# --- Файлы ---
-*.log
