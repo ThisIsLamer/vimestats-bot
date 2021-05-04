@@ -2,7 +2,16 @@
 server/node_modules/
 
 # Структура файла:
-# {{"SERVER": {"TOKEN": "YOUR DISCORD TOKEN (*)", "PREFIX": "YOUR DEFAULT PREFIX (*)", "ID": "YOUR BOT ID (OPTIONAL)"}}}
+# {{"SERVER": {
+#    "TOKEN": "YOUR DISCORD TOKEN (*)", "PREFIX": "YOUR DEFAULT PREFIX (*)", "ID": "YOUR BOT ID (OPTIONAL)"
+#   },
+#   "VIMEAPI": {
+#       "TOKEN": "YOUR VIME API TOKEN"
+#   },
+#   "YOUTUBEAPI": {
+#       "TOKEN": "YOUR YOUTUBE API TOKEN"
+#   }
+# }}
 server/src/config.json
 
 # --- Файлы ---
