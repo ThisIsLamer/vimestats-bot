@@ -13,13 +13,13 @@ module.exports = {
     // получить игрока по нику
     async get_player_nick(nick) {
         const user = await get_request(`https://api.vimeworld.ru/user/name/${nick}?token=${token}`);
-        if (user.length === 0) return {error: {code: -1}};
+        if (user.length === 0) return {error: true};
         else return user;
     },
     // получить игрока по id
     async get_player_id(id) {
         const user = await get_request(`https://api.vimeworld.ru/user/${id}?token=${token}`);
-        if (user.length === 0) return {error: {code: -1}};
+        if (user.length === 0) return {error: true};
         else return user;
     },
     // получить друзей игрока по id
@@ -42,7 +42,7 @@ module.exports = {
     // поиск гильдии по названию и тегу
     async guild_search(query) {
         const guilds = await get_request(`https://api.vimeworld.ru/guild/search?query=${query}?token=${token}`);
-        if (guilds.length === 0) return {error: {code: -1}};
+        if (guilds.length === 0) return {error: true};
         else return guilds;
     },
     // поиск гильдии по id

@@ -19,6 +19,8 @@ module.exports = {
     description: "Вывод статистики игрока",
     async execute(client, message, args) {
         let user = await get_player_nick(args[0]);
+        if (user?.error) return await message.channel.send("Игрок не найден, проверьте правильность ввода");
+        
         user = user[0];
         let stats = await get_player_stats(user.id);
         stats = stats.stats.ARC.global;
@@ -109,7 +111,7 @@ module.exports = {
                 **• Уровень**
                 *${user.guild.level}*
                 **• Прогресс**
-                *${(user.guild.levelPercentage*100).toFixed(2)}*
+                *${(user.guild.levelPercentage*100).toFixed(2)}%*
                 **• Цвет**
                 *${user.guild.color}*
                 **• id**
