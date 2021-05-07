@@ -3,9 +3,10 @@ const { check_guild, get_prefix } = require("../database/prefix_database");
 module.exports = {
     name: "message",
     description: "Обработчик сообщений",
+    command: false,
     async execute(msg, config) {
         // обьявление префикса и id гильдии, если есть в списке кастомных префиксов
-        const guild_id = Number(check_guild(msg.guild.id));
+        const guild_id = check_guild(msg.guild.id);
         const prefix = await get_prefix(msg.guild.id, config.SERVER.PREFIX);
 
         // проверка на вызов без префикса, ботом, в ДМ сообщениях

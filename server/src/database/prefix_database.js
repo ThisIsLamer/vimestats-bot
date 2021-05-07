@@ -4,7 +4,7 @@ const logger = require("../utils/logger");
 const prefix_database_file = process.cwd() + "/src/database/prefix_database.json";
 
 
-function put_prefix(guild_id, prefix) {
+async function put_prefix(guild_id, prefix) {
     fs.readFile(prefix_database_file, "utf8", (err, data) => {
         if (err) logger.error(err);
         else {
@@ -14,19 +14,17 @@ function put_prefix(guild_id, prefix) {
             fs.writeFile(prefix_database_file, json, "utf8", ()=>{});
         }
     })
+    return true;
 }
 
 async function get_prefix(guild_id, pref="!") {
     let prefix = pref;
-    fs.readFile(prefix_database_file, "utf8", async (err, data) => {
-        if (err) logger.error(err);
-        else {
-            obj = await JSON.parse(data).prefix[guild_id];
-            if (obj != undefined) {
-                this.prefix = obj;
-            }            
-        }
-    })
+    const data = fs.readFileSync(prefix_database_file, "utf8");
+    const obj = await JSON.parse(data).prefix[guild_id];
+    if (!(obj === undefined)) {
+        prefix = obj;
+    }
+
     return new Promise((resolve) => {
         resolve(prefix);
     });

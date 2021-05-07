@@ -4,9 +4,10 @@ const { get_online, get_staff_online } = require(process.cwd() + "/src/vimeapi.j
 
 module.exports = {
     name: "online",
-    description: "Просмотр онлайна проекта",
-    async execute(client, msg, args) {
-        const message = await msg.channel.send("Загрузка...");
+    description: "Позволяет просматривать онлайн проекта VimeWorld",
+    command: true,
+    async execute(client, ctx, args) {
+        const message = await ctx.channel.send("Загрузка...");
 
         const online = await get_online();
         const staff_online = await get_staff_online();

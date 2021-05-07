@@ -46,8 +46,9 @@ module.exports = {
         else return guilds;
     },
     // поиск гильдии по id
-    async get_guild(id) {
-        return await get_request(`https://api.vimeworld.ru/guild/get?id=${id}?token=${token}`);
+    async get_guild(value={name: null, id: null}) {
+        if (value.name === undefined) return await get_request(`https://api.vimeworld.ru/guild/get?id=${value.id}`);
+        return await get_request(`https://api.vimeworld.ru/guild/get?name=${value.name}`);
     },
     async get_leaderboard(mode, records) {
         return await get_request(`https://api.vimeworld.ru/leaderboard/get/${mode}/wins?size=${records}`);
@@ -68,10 +69,15 @@ module.exports = {
     async get_locale(parts=null, name="ru") {
         return await get_request(`https://api.vimeworld.ru/locale/ru?parts=game_stats?token=${token}`);
     },
+    // получить всевозможные достижения
+    async get_achievements() {
+        return await get_request(`https://api.vimeworld.ru/misc/achievements?token=${token}`);
+    },
     // получить голову игрока
     async get_player_head(nick) {
         return `http://skin.vimeworld.ru/head/${nick}.png`
     },
+    // получить страничку игрока на vimetop
     async get_player_page(nick) {
         return `https://vimetop.ru/player/${nick}`;
     }

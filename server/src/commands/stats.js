@@ -16,10 +16,13 @@ const { get_player_nick, get_player_stats, get_player_status, get_player_friends
 
 module.exports = {
     name: "stats",
-    description: "Вывод статистики игрока",
-    async execute(client, message, args) {
+    description: "Позволяет просматривать статистику игрока: !stats <username>",
+    command: true,
+    async execute(client, ctx, args) {
+        const message = await ctx.channel.send("Загрузка...");
+
         let user = await get_player_nick(args[0]);
-        if (user?.error) return await message.channel.send("Игрок не найден, проверьте правильность ввода");
+        if (user?.error) return await message.edit("Игрок не найден, проверьте правильность ввода");
         
         user = user[0];
         let stats = await get_player_stats(user.id);
@@ -122,6 +125,6 @@ module.exports = {
             ).setColor(embed_guild_color[user.guild.color])
         }
 
-        await message.channel.send(embed);
+        await message.edit("", embed);
     }
 }
