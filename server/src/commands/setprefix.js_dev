@@ -1,0 +1,15 @@
+const Discord = require("discord.js");
+
+const { put_prefix } = require(process.cwd() + "/src/database/prefix_database.js");
+
+module.exports = {
+    name: "setprefix",
+    description: "Позволяет установить свой префикс для бота в гильдии, доступна только администраторам",
+    command: true,
+    async execute(client, ctx, args) {
+        console.log(await ctx.member);
+        if (args.length === 0) return await ctx.channel.send("Префикс не может быть пустым полем");
+        else if (args.length > 1) return await ctx.channel.send("В префиксе не должно быть пробелов");
+        if (await put_prefix(ctx.channel.guild.id, args[0])) return await ctx.channel.send(`Префикс: ${args[0]} успешно установлен`);
+    }
+}

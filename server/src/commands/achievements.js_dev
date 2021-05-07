@@ -1,0 +1,26 @@
+const Discord = require("discord.js");
+
+const switch_embeds = require(process.cwd() + "/src/utils/switch_embeds.js");
+
+const { get_achievements, get_player_achievements, get_player_nick } = require(process.cwd() + "/src/vimeapi.js");
+
+module.exports = {
+    name: "achievements",
+    description: "Просмотр всех возможных достижений, или достижений игрока, после ввода ника",
+    async execute(client, ctx, args) {
+        const message = await ctx.channel.send("Загрузка...");
+
+        if (!(args.length === 0)) {
+            const user = await get_player_nick(args[0]);
+            if (user?.error === true) {
+                return await message.edit("Игрок не найден, проверьте правильность ввода");
+            }
+            const user_ach = await get_player_achievements(user.id);
+            const achievements = await get_achievements();
+
+        } 
+
+
+        
+    }
+}
