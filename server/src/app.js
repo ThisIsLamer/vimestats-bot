@@ -21,7 +21,7 @@ async function main(logging=true) {
 
     client.login(config.SERVER.TOKEN).then(() => {
         client.user.setPresence({
-            activity: {name: "! | !help"},
+            activity: {name: "+ | +help"},
             status: "online"
         })
     });

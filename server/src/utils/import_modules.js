@@ -9,7 +9,7 @@ module.exports = {
         const files = fs.readdirSync(value).filter(file => file.endsWith(".js"));
         // импортируем все файлы в коллекцию. {name: module}
         for (const file of files) {
-            if (logging) logger.log(`Модуль [${value}/${file}] - загружен`);
+            if (logging) logger.log(`Модуль [${value}/${file}] - загружен`, false);
             const props = require(`${process.cwd()}/${value}/${file}`);
             client.commands.set(props.name, props);
         }
